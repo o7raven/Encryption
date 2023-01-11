@@ -1,11 +1,17 @@
 import os
+import sys
+import time
+import threading
 import base64
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.backends import default_backend
 from cryptography.fernet import Fernet
 from termcolor import colored
-import random 
+
+import random
+
+_defaultKey = 'decryption_key.key'
 
 class Crypto:
     def __init__(self, key=None):
@@ -64,32 +70,62 @@ class Crypto:
             f.write(decrypted_data)
         print(colored(f"[+] {file_path} was decrypted.", "green"))
 
+
+def loading():
+    chars = "/—\|" 
+    for char in chars:
+        sys.stdout.write(colored('\r'+'loading...'+char, "magenta"))
+        time.sleep(.1)
+        sys.stdout.flush() 
+    print(colored('\n\nLoaded! \n\n', "magenta"))
+    menu()
+
 def menu():
+    logo = '''v.1
+
+            8b,dPPYba, ,adPPYYba, 8b       d8  ,adPPYba, 8b,dPPYba,   
+            88P'   "Y8 ""     `Y8 `8b     d8' a8P_____88 88P'   `"8a  
+            88         ,adPPPPP88  `8b   d8'  8PP""""""" 88       88  
+            88         88,    ,88   `8b,d8'   "8b,   ,aa 88       88  
+            88         `"8bbdP"Y8     "8"      `"Ybbd8"' 88       88  
+
+    '''
     """
     Displays a menu and handles user input to perform different actions
     """
+    print(colored(logo, "magenta"))
     print(colored("\nWelcome to the File Encryption/Decryption Tool\n", "cyan"))
+    
     crypto = Crypto()
     while True:
-        print(colored("[1] Generate key and encrypt a file", "yellow"))
-        print(colored("[2] Load key and decrypt a file", "yellow"))
-        print(colored("[3] Exit", "yellow"))
+        try:
+            print(colored("[1] Generate key and encrypt a file", "magenta"))
+            print(colored("[2] Load key and decrypt a file", "magenta"))
+            print(colored("[3] Exit \n", "magenta"))
 
-        choice = input(colored("Enter your choice: ", "cyan"))
-        if choice == "1":
-            file_path = input(colored("Enter the path of the file to encrypt: ", "cyan"))
-            crypto.encrypt_file(file_path)
-        elif choice == "2":
-            key_path = input(colored("Enter the path of the decryption key file: ", "cyan"))
-            crypto.load_key(key_path)
-            file_path = input(colored("Enter the path of the file to decrypt: ", "cyan"))
-            crypto.decrypt_file(file_path)
+            choice = input(colored("Enter your choice: ", "cyan"))
+            if choice == "1":
+                file_path = input(colored("Enter the path of the file to encrypt: ", "cyan"))
+                crypto.encrypt_file(file_path)
+            elif choice == "2":
+                key_path = input(colored("Enter the path of the decryption key file (default: 'decryption_key.key'): ", "cyan"))
+                if not key_path:
+                    crypto.load_key(_defaultKey)
+                else:
+                    crypto.load_key(key_path)
+                file_path = input(colored("Enter the path of the file to decrypt: ", "cyan"))
+                crypto.decrypt_file(file_path)
 
-        elif choice == "3":
-            print(colored("Thank you for using the File Encryption/Decryption Tool", "green"))
-            break
-        else:
-            print(colored("Invalid choice. Please try again.", "red"))
+            elif choice == "3":
+                print(colored("\nThank you for using the File Encryption/Decryption Tool", "green"))
+                break
+            else:
+                print(colored("\nInvalid choice. Please try again. \n", "red"))
+        except:
+            print(colored("\n\nAn error has occured. Please try again. \n", "red"))
+    
 
 if __name__ == "__main__":
-    menu()
+    clear = lambda: os.system('cls')
+    clear()
+    loading()
