@@ -5,6 +5,7 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.backends import default_backend
 from cryptography.fernet import Fernet
 from termcolor import colored
+import random 
 
 class Crypto:
     def __init__(self, key=None):
@@ -16,8 +17,10 @@ class Crypto:
         Generates a new key, writes it to the "decryption_key.key" file,
         and returns the key
         """
-        password = b"my_secret_password"
-        salt = b"my_secret_salt"
+        pwd = random.randbytes(16)
+        salt = random.randbytes(16)
+        password = pwd
+        salt = salt
         kdf = PBKDF2HMAC(
             algorithm=hashes.SHA256,
             length=32,
