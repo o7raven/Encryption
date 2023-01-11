@@ -11,7 +11,6 @@ from termcolor import colored
 
 import random
 
-_defaultKey = 'decryption_key.key'
 
 class Crypto:
     def __init__(self, key=None):
@@ -57,7 +56,7 @@ class Crypto:
         encrypted_data = self.fernet.encrypt(data)
         with open(file_path, "wb") as f:
             f.write(encrypted_data)
-        print(colored(f"[+] {file_path} was encrypted.", "green"))
+        print(colored(f"\n[+] {file_path} was encrypted.\n", "green"))
 
     def decrypt_file(self, file_path):
         """
@@ -68,7 +67,7 @@ class Crypto:
         decrypted_data = self.fernet.decrypt(encrypted_data)
         with open(file_path, "wb") as f:
             f.write(decrypted_data)
-        print(colored(f"[+] {file_path} was decrypted.", "green"))
+        print(colored(f"\n[+] {file_path} was decrypted.\n", "green"))
 
 
 def loading():
@@ -108,11 +107,8 @@ def menu():
                 file_path = input(colored("Enter the path of the file to encrypt: ", "cyan"))
                 crypto.encrypt_file(file_path)
             elif choice == "2":
-                key_path = input(colored("Enter the path of the decryption key file (default: 'decryption_key.key'): ", "cyan"))
-                if not key_path:
-                    crypto.load_key(_defaultKey)
-                else:
-                    crypto.load_key(key_path)
+                key_path = input(colored("Enter the path of the decryption key file: ", "cyan"))
+                crypto.load_key(key_path)
                 file_path = input(colored("Enter the path of the file to decrypt: ", "cyan"))
                 crypto.decrypt_file(file_path)
 
